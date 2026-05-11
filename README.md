@@ -1,4 +1,4 @@
-# loa-rooms-substrate
+# construct-rooms-substrate
 
 > a substrate that puts every loa construct into an isolated room.
 > kids in a classroom, each with a role, passing envelopes that show how they thought.
@@ -41,7 +41,7 @@ This is what the brief meant by "the operator cannot reliably see *this construc
 
 **A pack that provides invocation boundaries for any Loa construct.**
 
-When `loa-rooms-substrate` is installed in a repo with constructs synced, every construct becomes invocable as a Claude Code native subagent. Each invocation runs in an **isolated room** — its own context, its own tool allowlist, its own transcript — and emits a typed **handoff packet** when it finishes. Multi-stage compositions chain rooms together via packets, never via raw transcript.
+When `construct-rooms-substrate` is installed in a repo with constructs synced, every construct becomes invocable as a Claude Code native subagent. Each invocation runs in an **isolated room** — its own context, its own tool allowlist, its own transcript — and emits a typed **handoff packet** when it finishes. Multi-stage compositions chain rooms together via packets, never via raw transcript.
 
 It is **substrate**, not expertise. It does not know what `artisan` does or what `k-hole` finds. It knows how to put either of them into a room, watch the room run, and record what came out.
 
@@ -89,7 +89,7 @@ The Loa framework already provides first-class construct support (cycle-051 / [`
 
 That's the **lightweight in-session approach**: agent reads the index, loads the persona inline, scopes to the construct's read/write paths. It works without spawning subagents. **It is the canonical Loa construct contract.**
 
-`loa-rooms-substrate` is a **separate, opt-in runtime** that adds Claude Code-native subagent spawning on top. It does not replace the framework's L1-L5; it complements it. Both can coexist in the same repo. Operators can prefer one, the other, or use both.
+`construct-rooms-substrate` is a **separate, opt-in runtime** that adds Claude Code-native subagent spawning on top. It does not replace the framework's L1-L5; it complements it. Both can coexist in the same repo. Operators can prefer one, the other, or use both.
 
 ### NOT a replacement for Loa's construct contract
 
@@ -105,9 +105,9 @@ That is the only manifest surface the substrate reads.
 
 ### NOT its own construct
 
-`loa-rooms-substrate` has no persona. No taste tokens. No domain expertise. No "voice." It is mechanism. If you `@-mention construct-loa-rooms-substrate` you get nothing useful — there is nothing to embody.
+`construct-rooms-substrate` has no persona. No taste tokens. No domain expertise. No "voice." It is mechanism. If you `@-mention construct-construct-rooms-substrate` you get nothing useful — there is nothing to embody.
 
-For comparison: `construct-artisan` IS a construct (ALEXANDER persona, craft expertise). `construct-observer` IS a construct (KEEPER persona, user-research expertise). `loa-rooms-substrate` is the floor those constructs invoke FROM, not a construct itself.
+For comparison: `construct-artisan` IS a construct (ALEXANDER persona, craft expertise). `construct-observer` IS a construct (KEEPER persona, user-research expertise). `construct-rooms-substrate` is the floor those constructs invoke FROM, not a construct itself.
 
 ### NOT prescriptive about modes, workflows, or composition shapes
 
@@ -145,7 +145,7 @@ Other runtimes are welcome and possible — they would be **separate substrate p
 
 ### NOT a way to create new construct expertise
 
-If you want to author a new construct (`construct-foo`), use the existing tooling: `/create-construct` skill, `construct-base` template, the construct-creator pack. `loa-rooms-substrate` only provides the room mechanics for constructs that already exist.
+If you want to author a new construct (`construct-foo`), use the existing tooling: `/create-construct` skill, `construct-base` template, the construct-creator pack. `construct-rooms-substrate` only provides the room mechanics for constructs that already exist.
 
 ### NOT a tool for the construct registry
 
@@ -162,7 +162,7 @@ The Loa Constructs Network ([`constructs.network`](https://constructs.network)) 
 | In-session construct awareness (index, name resolution, composition routing, archetype, ambient greeting) | **Loa framework** ✅ already shipped (cycle-051) |
 | Construct registry, distribution, install, version sync | **Loa Constructs Network** ([this repo](https://github.com/0xHoneyJar/loa-constructs)) |
 | Domain expertise, persona content, skills, taste tokens | **Individual construct packs** (e.g. `construct-artisan`, `construct-k-hole`) |
-| **Native-subagent invocation boundaries (rooms), generator, composition runner, handoff packets, hooks** | **`loa-rooms-substrate`** ← this pack |
+| **Native-subagent invocation boundaries (rooms), generator, composition runner, handoff packets, hooks** | **`construct-rooms-substrate`** ← this pack |
 | Other runtime targets (OpenAI Agent SDK, headless Python, in-browser) | **Separate substrate packs** (future, not this one) |
 | Per-repo generated outputs (`.claude/agents/`, `.run/`, `grimoires/`) | **Per-repo (consumer)** |
 | Sandbox isolation (process, network, fs) | **Not yet shipped** (future cycle) |
@@ -173,7 +173,7 @@ If you find yourself asking "where does X go," the test is: does it know about a
 
 ## Status
 
-**Experimental.** This pack was authored as the deliverable of the `cycle-construct-rooms` cycle (simstim-20260509-aead9136). It is currently staged in the loa-constructs monorepo at [`loa-rooms-substrate/`](.) pending publication as a standalone construct pack repo and registration with the Loa Constructs Network.
+**Experimental.** This pack was authored as the deliverable of the `cycle-construct-rooms` cycle (simstim-20260509-aead9136). It is currently staged in the loa-constructs monorepo at [`construct-rooms-substrate/`](.) pending publication as a standalone construct pack repo and registration with the Loa Constructs Network.
 
 Until publication:
 
@@ -183,7 +183,7 @@ Until publication:
 
 After publication (planned next cycle):
 
-- `/constructs install loa-rooms-substrate` will provide the substrate to any Loa-mounted repo
+- `/constructs install construct-rooms-substrate` will provide the substrate to any Loa-mounted repo
 - Construct sync workflow will trigger `construct-adapter-gen.sh` post-install to populate `.claude/agents/`
 - Other repos (mcv-interface, mibera-interface, etc.) become opt-in clients
 
@@ -227,7 +227,7 @@ Eight gates from the originating cycle's PRD §8 — all have green test infrast
 
 ```bash
 # 1. Install the substrate
-/constructs install loa-rooms-substrate
+/constructs install construct-rooms-substrate
 
 # 2. Generate adapters for every construct in this repo
 bash .claude/scripts/construct-adapter-gen.sh
@@ -282,7 +282,7 @@ This is an open architectural concern, not solved by this pack:
   - **Per-manifest override**: set `adapter.model: <alias>` in a construct's `construct.yaml` (v4 schema field). Generator honors it.
   - **Global default override**: set `LOA_ROOMS_DEFAULT_MODEL` env var (e.g., `LOA_ROOMS_DEFAULT_MODEL=sonnet bash construct-adapter-gen.sh`) — generator uses it for any construct without an explicit `adapter.model`. Not yet implemented; future-cycle work.
 
-- **What the substrate explicitly does NOT decide:** which model a given construct should use. `loa-rooms-substrate` is mechanism, not opinion. When Hounfour's routing contract finalizes, it becomes the source of truth; the substrate's job is to render whatever model decision Hounfour produces into the adapter frontmatter.
+- **What the substrate explicitly does NOT decide:** which model a given construct should use. `construct-rooms-substrate` is mechanism, not opinion. When Hounfour's routing contract finalizes, it becomes the source of truth; the substrate's job is to render whatever model decision Hounfour produces into the adapter frontmatter.
 
 If you've just deployed the global mirror and your token cost is climbing, the immediate lever is:
 

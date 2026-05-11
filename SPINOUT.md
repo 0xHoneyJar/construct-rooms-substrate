@@ -4,7 +4,7 @@ This repo was extracted from [`0xHoneyJar/loa-constructs#234`](https://github.co
 
 ## Why a separate repo
 
-`loa-rooms-substrate` is **substrate, not expertise**. It does not embody any construct — it provides the runtime that puts every construct into an isolated room. Architecturally it sits between:
+`construct-rooms-substrate` is **substrate, not expertise**. It does not embody any construct — it provides the runtime that puts every construct into an isolated room. Architecturally it sits between:
 
 - **L3 Runtime: `loa-finn`** (sessions, model routing, tool sandbox)
 - **Constructs** (expertise packs: artisan, observer, k-hole, etc.)
@@ -15,7 +15,7 @@ A pack that everyone composes with does not belong inside the network repo (loa-
 
 ## What's in this repo
 
-Identical to `loa-constructs/loa-rooms-substrate/` at the time of PR #234. 34 files:
+Identical to `loa-constructs/construct-rooms-substrate/` at the time of PR #234. 34 files:
 
 - `README.md` — what this IS / what this IS NOT (read first)
 - `construct.yaml` — pack manifest (slug, contributes, requirements, post_install, non_goals)
@@ -30,15 +30,15 @@ Identical to `loa-constructs/loa-rooms-substrate/` at the time of PR #234. 34 fi
 
 ## Migration path
 
-1. **Operator**: create GitHub repo `0xHoneyJar/loa-rooms-substrate`
+1. **Operator**: create GitHub repo `0xHoneyJar/construct-rooms-substrate`
    ```bash
-   gh repo create 0xHoneyJar/loa-rooms-substrate --public --description "substrate that puts every loa construct into an isolated room"
+   gh repo create 0xHoneyJar/construct-rooms-substrate --public --description "substrate that puts every loa construct into an isolated room"
    ```
 
 2. **Wire remote + initial commit**:
    ```bash
-   cd ~/Documents/GitHub/loa-rooms-substrate
-   git remote add origin git@github.com:0xHoneyJar/loa-rooms-substrate.git
+   cd ~/Documents/GitHub/construct-rooms-substrate
+   git remote add origin git@github.com:0xHoneyJar/construct-rooms-substrate.git
    git add -A
    git commit -m "feat: initial substrate extracted from loa-constructs#234
 
@@ -51,11 +51,11 @@ Identical to `loa-constructs/loa-rooms-substrate/` at the time of PR #234. 34 fi
    git push -u origin main
    ```
 
-3. **Register with Loa Constructs Network**: publish to `constructs.network` registry per the network's pack-publishing flow. After registration, `/constructs install loa-rooms-substrate` in any Loa-mounted repo will pull this pack.
+3. **Register with Loa Constructs Network**: publish to `constructs.network` registry per the network's pack-publishing flow. After registration, `/constructs install construct-rooms-substrate` in any Loa-mounted repo will pull this pack.
 
 4. **Retire the loa-constructs duplication**: open follow-up PR in loa-constructs that:
-   - Deletes `loa-constructs/loa-rooms-substrate/` (now lives in its own repo)
-   - Optionally deletes `loa-constructs/.claude/{scripts,data,hooks,agents}/` cycle-substrate files (consumers install via `/constructs install loa-rooms-substrate`)
+   - Deletes `loa-constructs/construct-rooms-substrate/` (now lives in its own repo)
+   - Optionally deletes `loa-constructs/.claude/{scripts,data,hooks,agents}/` cycle-substrate files (consumers install via `/constructs install construct-rooms-substrate`)
    - Updates loa-constructs README to reference this repo
 
 ## What's deliberately not done in the spinout
@@ -79,7 +79,7 @@ Before pushing + publishing:
 
 ## Future-cycle work
 
-- **Hounfour-routed model selection**: integrate `loa-hounfour@8.3.1` intelligence routing so adapter `model:` field reflects task-adaptive routing rather than `inherit`. See loa-rooms-substrate README §"Model routing & token cost".
+- **Hounfour-routed model selection**: integrate `loa-hounfour@8.3.1` intelligence routing so adapter `model:` field reflects task-adaptive routing rather than `inherit`. See construct-rooms-substrate README §"Model routing & token cost".
 - **Observability station**: a small UI (zero-native.dev evaluated, alternatives welcome) that visualizes envelope chains across multi-stage compositions. Render the structured `why` fields, surface rationale-vs-behavior divergence per the NLA paper.
 - **Per-construct rehearsal**: S2-T7 from the originating cycle — operator-workflow rehearsal for Form A dispatch.
 - **Hook integration verification**: empirical confirmation that Claude Code's `SubagentStart`/`SubagentStop` events actually fire the hooks at `.claude/hooks/subagent-{start,stop}/`. Currently bats tests invoke directly via env vars; production firing is operator-controlled.
