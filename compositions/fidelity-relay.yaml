@@ -1,0 +1,28 @@
+# Fidelity Relay — RFC #237 reference composition
+#
+# Cycle: cycle-craft-cluster (simstim-20260511-craftc1c5), Sprint 3, task C.2
+# SDD: §2.1.4
+#
+# The fidelity audit shape: artisan inscribes the taste intent, crucible
+# checks shipped reality against it, artisan confirms whether the diff is
+# intentional or fix-required. Same construct appears at stages 0 and 2 —
+# this is the canonical "declare → inspect → confirm" rhythm.
+schema_version: 1
+pattern: pair-relay
+artifact_name: fidelity-audit-verdict
+sequence:
+  - construct: artisan
+    role: declare-taste     # ALEXANDER inscribes the spec being audited against
+    persona: ALEXANDER
+  - construct: crucible
+    role: validate-shipped  # crucible compares shipped surface to declared taste
+    persona: null
+  - construct: artisan
+    role: confirm-intent    # ALEXANDER validates that crucible's diff matches taste intent
+    persona: ALEXANDER
+max_cycles: 3
+surface_mode: summary
+domain: fidelity
+convergence_criteria: >
+  Operator accepts artisan's final-cycle verdict; diff between declared and
+  shipped is either acknowledged-as-intentional or accepted-as-fix-required.

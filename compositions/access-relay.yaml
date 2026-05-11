@@ -1,0 +1,33 @@
+# Access Relay — RFC #236 reference composition
+#
+# Cycle: cycle-craft-cluster (simstim-20260511-craftc1c5), Sprint 3, task C.3
+# SDD: §2.1.4
+#
+# The accessibility audit shape: kansei (feel) names interaction-feel gaps
+# that exclude users; artisan adjusts taste tokens / motion physics / contrast
+# in response; kansei validates that the response actually works for the
+# excluded.
+#
+# Sprint D NOTE (per SDD §2.1.4): if this kansei-artisan-kansei loop proves
+# insufficient at rehearsal, the operator may explore a variant
+# `kansei → crucible → kansei` triple-relay instead. The synthesis verdict
+# for the access lane (Sprint E) documents which form was actually needed.
+schema_version: 1
+pattern: pair-relay
+artifact_name: accessibility-decision
+sequence:
+  - construct: kansei
+    role: name-exclusion     # kansei names interaction-feel gaps that exclude users
+    persona: null
+  - construct: artisan
+    role: respond-with-taste # artisan adjusts taste tokens / motion physics / contrast
+    persona: ALEXANDER
+  - construct: kansei
+    role: validate-feel      # kansei validates the response works for the excluded
+    persona: null
+max_cycles: 3
+surface_mode: summary
+domain: accessibility
+convergence_criteria: >
+  kansei's final-cycle envelope confirms the exclusion gap is addressed
+  (or explicitly names the residual gap if not).

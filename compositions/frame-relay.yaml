@@ -1,0 +1,31 @@
+# Frame Relay — RFC #238 reference composition
+#
+# Cycle: cycle-craft-cluster (simstim-20260511-craftc1c5), Sprint 3, task C.4
+# SDD: §2.1.4
+#
+# The macro-pattern selection shape: rosenzu (route topology) names the
+# shape under question, artisan critiques whether component primitives fit
+# the topology, rosenzu picks the macro-pattern given the critique.
+#
+# The output 'macro-pattern-recommendation' is a named layout archetype
+# (dashboard / feed / canvas / etc.) with rationale grounded in the artisan
+# critique, NOT a free-form design.
+schema_version: 1
+pattern: pair-relay
+artifact_name: macro-pattern-recommendation
+sequence:
+  - construct: rosenzu
+    role: name-topology      # rosenzu names the route/data shape under question
+    persona: LYNCH
+  - construct: artisan
+    role: critique-fit       # artisan critiques whether component primitives fit the topology
+    persona: ALEXANDER
+  - construct: rosenzu
+    role: select-pattern     # rosenzu picks the macro-pattern given the critique
+    persona: LYNCH
+max_cycles: 3
+surface_mode: summary
+domain: frame
+convergence_criteria: >
+  rosenzu's final-cycle envelope names a macro-pattern (dashboard / feed /
+  canvas / etc.) with rationale grounded in the artisan critique.
