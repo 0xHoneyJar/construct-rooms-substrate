@@ -22,7 +22,7 @@
   ],
   "domain": "visual-surface",
   "agent_id": "agent-7f3d2a8e1b9c4f6d",
-  "transcript_path": "/Users/zksoju/.claude/projects/-Users-zksoju-Documents-GitHub-loa-constructs/abc123/subagents/agent-7f3d2a8e1b9c4f6d.jsonl",
+  "transcript_path": "~/.claude/projects/loa-constructs/<session>/subagents/agent-7f3d2a8e1b9c4f6d.jsonl",
   "transcript_excerpt": "Structure assessment: typographic hierarchy holds at 4px baseline; motion uses ease-in-out where springs are warranted...",
   "input_refs": [
     {"type": "artifact", "ref": "tests/fixtures/sample-surface.png", "hash": null}
