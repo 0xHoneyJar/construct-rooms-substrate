@@ -1,0 +1,11 @@
+schema_version: 1
+pattern: pair-relay
+sequence:
+  - construct: artisan
+    role: declare-taste
+    persona: ALEXANDER
+  - construct: crucible
+    role: validate-shipped
+    persona: null
+max_cycles: 2
+surface_mode: summary

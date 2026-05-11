@@ -1,0 +1,17 @@
+schema_version: 1
+pattern: pair-relay
+artifact_name: fidelity-audit-verdict
+sequence:
+  - construct: artisan
+    role: declare-taste
+    persona: ALEXANDER
+  - construct: crucible
+    role: validate-shipped
+    persona: null
+  - construct: artisan
+    role: confirm-intent
+    persona: ALEXANDER
+max_cycles: 3
+surface_mode: summary
+domain: fidelity
+convergence_criteria: "Operator accepts artisan's final-cycle verdict; diff between declared and shipped is either acknowledged-as-intentional or accepted-as-fix-required"

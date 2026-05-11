@@ -1,0 +1,17 @@
+schema_version: 1
+pattern: pair-relay
+artifact_name: macro-pattern-recommendation
+sequence:
+  - construct: rosenzu
+    role: name-topology
+    persona: LYNCH
+  - construct: artisan
+    role: critique-fit
+    persona: ALEXANDER
+  - construct: rosenzu
+    role: select-pattern
+    persona: LYNCH
+max_cycles: 3
+surface_mode: summary
+domain: frame
+convergence_criteria: "rosenzu's final-cycle envelope names a macro-pattern (dashboard / feed / canvas / etc.) with rationale grounded in the artisan critique"
