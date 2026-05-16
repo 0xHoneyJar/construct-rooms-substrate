@@ -1,0 +1,77 @@
+{
+  "construct_slug": "artisan",
+  "output_type": "Verdict",
+  "verdict": {
+    "score": 4,
+    "axes": {"weight": 4, "rhythm": 5, "material": 3},
+    "summary": "Surface meets craft baseline; consider tightening rhythm-weight coupling."
+  },
+  "invocation_mode": "room",
+  "cycle_id": "simstim-20260515-vault-aware",
+  "persona": "ALEXANDER",
+  "schema_version": "1.1",
+  "output_refs": [
+    {"type": "verdict", "ref": "artisan:visual-surface:scoring", "hash": null}
+  ],
+  "evidence": [
+    "grimoires/loa/sdd.md:42"
+  ],
+  "source_provenance": [
+    {
+      "source_type": "vault",
+      "ref": "wiki/concepts/freeside-as-layered-station.md",
+      "privacy_scope": "actor_private",
+      "use_label": "background_only",
+      "operator_validated": true,
+      "decay_class": "slow",
+      "hash": null
+    },
+    {
+      "source_type": "grimoire",
+      "ref": "grimoires/loa/sdd.md",
+      "privacy_scope": "operator_team",
+      "use_label": "usable",
+      "operator_validated": true,
+      "decay_class": "normal",
+      "hash": null
+    },
+    {
+      "source_type": "agent_inference",
+      "ref": "internal-pattern-matching:weight-rhythm-coupling",
+      "privacy_scope": "public",
+      "use_label": "mark_as_contested",
+      "operator_validated": false,
+      "decay_class": "fast",
+      "hash": null
+    }
+  ],
+  "kaironic_context": {
+    "trigger": "kaironic",
+    "flow_state": "reviewing",
+    "attention_cost": "medium",
+    "interrupt_authorized": true
+  },
+  "pushback_invitation": {
+    "primary_uncertainty": "The weight-rhythm coupling judgment relied on a vault doctrine (freeside-as-layered-station) loaded as background_only — the verdict assumes its 3-plane lens applies to visual-surface, which may not hold for non-architectural surfaces.",
+    "operator_check": "Does the 3-plane (Contract/Construct/Execution) decomposition apply to visual-surface scoring, or is that a misuse of the lens?",
+    "alternative_paths": [
+      "Score without the 3-plane lens; rely only on artisan's native rhythm/weight/material axes.",
+      "Defer scoring until the operator activates the 3-plane doctrine explicitly for this room."
+    ],
+    "confidence": 0.7
+  },
+  "domain": "visual-surface",
+  "agent_id": null,
+  "transcript_path": null,
+  "input_refs": [
+    {"type": "artifact", "ref": "tests/fixtures/sample-surface.png", "hash": null}
+  ],
+  "open_questions": [],
+  "gates_passed": [
+    {"gate_name": "schema_valid", "status": "passed", "reason": null}
+  ],
+  "gates_failed": [],
+  "composition_run_id": null,
+  "stage_index": 0,
+  "created_at": "2026-05-15T18:30:00Z"
+}

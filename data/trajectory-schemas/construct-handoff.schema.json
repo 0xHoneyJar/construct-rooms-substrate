@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://0xhoneyjar.dev/loa/schemas/construct-handoff.schema.json",
   "title": "Construct Handoff Packet",
-  "description": "Structured artifact emitted at every construct boundary crossing in a composition. Three-tier field policy (required / recommended / optional) per PRD FR-3.1abc. See grimoires/loa/sdd.md §2.4.",
+  "description": "Structured artifact emitted at every construct boundary crossing in a composition. Three-tier field policy (required / recommended / optional) per PRD FR-3.1abc. See grimoires/loa/sdd.md §2.4. v1.1 adds source_provenance + kaironic_context + pushback_invitation (additive, backwards-compat).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -58,6 +58,20 @@
         "maxLength": 1024
       },
       "description": "Citations: file:line refs, transcript excerpts, prior packet IDs. Recommended tier."
+    },
+    "source_provenance": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/provenanceEntry" },
+      "description": "Source materials the construct consulted, with privacy/use propagation. Required (in practice) when any input came from an operator-private surface (e.g. ~/vault/). Lets downstream rooms inherit privacy_scope + use_label and prevents silent leak across the operator-private / org-canonical boundary. Recommended tier."
+    },
+    "kaironic_context": {
+      "$ref": "#/$defs/kaironicContext",
+      "description": "Invocation-timing posture: was this fired kaironically (operator-pulled) vs chronos (scheduled) vs operator-paced. Lets observability detect when scheduled cycles broke operator flow. Lets downstream constructs adjust interrupt-authorization. Optional tier."
+    },
+    "pushback_invitation": {
+      "$ref": "#/$defs/pushbackInvitation",
+      "description": "Construct's own self-doubt surfaced for operator review. Names primary uncertainty + one specific operator_check question + optional alternative paths + confidence. Required (in practice) for output_type='Verdict' on high-blast-radius outputs. Composes with operator OS MAY-LATITUDE-5 'pushback affordance' rule. Recommended tier."
     },
     "domain": {
       "type": ["string", "null"],
@@ -125,7 +139,7 @@
     "schema_version": {
       "type": "string",
       "pattern": "^1\\.[0-9]+(?:\\.[0-9]+)?$",
-      "description": "Schema version of this packet. Always 1.x.y for this cycle. Optional tier (defaults to 1.0)."
+      "description": "Schema version of this packet. Always 1.x.y for this cycle. v1.0 = original; v1.1 = adds source_provenance + kaironic_context + pushback_invitation. Optional tier (defaults to 1.0)."
     }
   },
   "$defs": {
@@ -170,6 +184,106 @@
         "reason": {
           "type": ["string", "null"],
           "maxLength": 1024
+        }
+      }
+    },
+    "provenanceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_type", "ref", "privacy_scope", "use_label"],
+      "properties": {
+        "source_type": {
+          "enum": [
+            "vault",
+            "grimoire",
+            "session",
+            "activated_doctrine",
+            "agent_inference",
+            "external"
+          ],
+          "description": "Origin class. 'vault' = operator-private second-brain (~/vault/), MUST carry privacy_scope=actor_private. 'grimoire' = project-scoped state. 'activated_doctrine' = operator-promoted vault citation with activation receipt. 'agent_inference' = no external source, agent-derived. 'external' = third-party (papers, repos, docs)."
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "description": "Source reference (path, URL, or named identifier). For vault sources, vault-relative path (e.g. 'wiki/concepts/freeside-as-layered-station.md')."
+        },
+        "privacy_scope": {
+          "enum": ["actor_private", "operator_team", "public"],
+          "description": "Propagated downstream. Composes with Eileen's recall-wedge SignatureEnvelope privacy semantics (loa-straylight). actor_private MUST NOT flow to public-frame surfaces."
+        },
+        "use_label": {
+          "enum": [
+            "usable",
+            "background_only",
+            "mark_as_contested",
+            "do_not_use_for_action"
+          ],
+          "description": "Authority level the source carries in the current room. Vault sources default to 'background_only' unless an activation receipt promoted them. Composes with Operator OS Straylight Memory Discipline."
+        },
+        "operator_validated": {
+          "type": "boolean",
+          "description": "Whether the operator has personally read and validated this source. Distinct from operator_signed (cryptographic). Maps to vault frontmatter read_state >= 'read'."
+        },
+        "decay_class": {
+          "enum": ["fast", "normal", "slow", "frozen", "unknown"],
+          "description": "Ebbinghaus decay class for confidence aging, per archivist construct."
+        },
+        "hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 of the source content at time of consultation. Lets downstream detect drift."
+        }
+      }
+    },
+    "kaironicContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "enum": ["kaironic", "chronos", "operator_invoked", "upstream_handoff"],
+          "description": "Why this construct fired. 'kaironic' = operator in flow. 'chronos' = scheduled (cron, autonomous, post-merge). 'operator_invoked' = explicit operator command. 'upstream_handoff' = composed downstream of another room."
+        },
+        "flow_state": {
+          "enum": ["discovery", "building", "reviewing", "shipping", "tending", "unknown"],
+          "description": "Operator's working-state classification at invocation. Mirrors operator OS modes (DIG/ARCH/SHIP/etc.) but normalized for envelope use."
+        },
+        "attention_cost": {
+          "enum": ["low", "medium", "high"],
+          "description": "Cost of the downstream operator-facing summary if this envelope surfaces. Low = single fact. Medium = synthesis. High = multi-page crystallization."
+        },
+        "interrupt_authorized": {
+          "type": "boolean",
+          "description": "Whether the construct may surface output mid-flight to operator. Defaults to false in chronos trigger. True only when (a) blast radius escalates OR (b) operator explicitly opened the loop."
+        }
+      }
+    },
+    "pushbackInvitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary_uncertainty": {
+          "type": "string",
+          "maxLength": 280,
+          "description": "What the construct is least confident about. One sentence. NOT 'I'm pretty sure but...' — name the actual weak link in the verdict."
+        },
+        "operator_check": {
+          "type": "string",
+          "maxLength": 280,
+          "description": "Single specific question the operator should verify before accepting. Bad: 'is this OK?'. Good: 'is the assumption that <X> holds in your environment correct?'"
+        },
+        "alternative_paths": {
+          "type": "array",
+          "maxItems": 4,
+          "items": { "type": "string", "maxLength": 200 },
+          "description": "Up to 4 alternative paths the construct considered and rejected. Surfaces counterfactuals for operator review."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Self-reported confidence in the verdict, 0..1. Calibratable over time."
         }
       }
     }
