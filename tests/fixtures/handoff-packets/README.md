@@ -19,6 +19,20 @@ Test inputs for `construct-handoff.schema.json` validation. Positive fixtures MU
 | `invalid-empty-pushback.json` | `pushback_invitation: {}` → required fields `primary_uncertainty` + `operator_check` missing. | BB-F3 |
 | `invalid-empty-kaironic.json` | `kaironic_context: {}` → required field `trigger` missing. | BB-F4 |
 
+## Negative (validation fails — added 2026-05-17, v1.2)
+
+| File | Failure reason | Closes finding |
+|---|---|---|
+| `invalid-empty-translation-note.json` | `translation_note: {}` → required field `note` missing. | construct-DDD cycle 2026-05-17 |
+| `invalid-vague-translation-note.json` | `translation_note.note: "short note"` → minLength 30 not met. | construct-DDD cycle 2026-05-17 |
+| `invalid-invalid-affinity-slug.json` | `source_construct_affinity` with `"The-Arcade"` / `"Some Bad Slug"` fails `^[a-z][a-z0-9-]*$` pattern. | construct-DDD cycle 2026-05-17 |
+
+## Positive v1.2
+
+| File | What it exercises |
+|---|---|
+| `valid-with-translation-note.json` | full v1.2 envelope: k-hole → artisan handoff with translation_note + source_construct_affinity on vault + external sources. |
+
 ## Parity pair
 
 `parity-pair/native-artisan-stage0.json` + `parity-pair/headless-artisan-stage0.json` exercise `handoff-parity-check.sh` (native vs headless divergence detection).
