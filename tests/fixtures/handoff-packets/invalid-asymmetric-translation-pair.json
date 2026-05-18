@@ -1,0 +1,12 @@
+{
+  "construct_slug": "artisan",
+  "output_type": "Verdict",
+  "verdict": {},
+  "invocation_mode": "room",
+  "cycle_id": "negative-fixture-asymmetric-pair",
+  "schema_version": "1.2",
+  "translation_note": {
+    "from_construct": "k-hole",
+    "note": "Research surfaced an interesting pattern about confidence-divergence in agent reasoning that should inform downstream review."
+  }
+}

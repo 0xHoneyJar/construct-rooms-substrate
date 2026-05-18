@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://0xhoneyjar.dev/loa/schemas/construct-handoff.schema.json",
   "title": "Construct Handoff Packet",
-  "description": "Structured artifact emitted at every construct boundary crossing in a composition. Three-tier field policy (required / recommended / optional) per PRD FR-3.1abc. See grimoires/loa/sdd.md §2.4. v1.1 adds source_provenance + kaironic_context + pushback_invitation (additive, backwards-compat). v1.1.1 adds allOf conditionals on provenanceEntry (vault→actor_private + vault!=usable), required fields on kaironicContext + pushbackInvitation, and honest docs about what schema enforces vs what adapter policy enforces.",
+  "description": "Structured artifact emitted at every construct boundary crossing in a composition. Three-tier field policy (required / recommended / optional) per PRD FR-3.1abc. See grimoires/loa/sdd.md §2.4. v1.1 adds source_provenance + kaironic_context + pushback_invitation (additive, backwards-compat). v1.1.1 adds allOf conditionals on provenanceEntry (vault→actor_private + vault!=usable), required fields on kaironicContext + pushbackInvitation, and honest docs about what schema enforces vs what adapter policy enforces. v1.2 adds source_construct_affinity to provenanceEntry + translation_note at envelope root (the construct-DDD anti-corruption layer at handoff — per 'no handoffs without observability' thesis). v1.2.1 closes Flatline+BB findings: privacy_scope on translation_note (privacy stickiness), schema_version coupling allOf (no silent v1.0 producers), tighter slug pattern (no trailing/double hyphens), uniqueItems on affinity arrays, symmetric from/to pairing on translation_note, minLength 60 on translation note (was 30).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
   "properties": {
     "construct_slug": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9-]*$",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
       "minLength": 1,
       "maxLength": 64,
       "description": "Loa construct identifier. Required tier."
@@ -72,6 +72,10 @@
     "pushback_invitation": {
       "$ref": "#/$defs/pushbackInvitation",
       "description": "Construct's own self-doubt surfaced for operator review. Schema enforces required: [primary_uncertainty, operator_check] with minLength 20 on each (rejects vague entries like 'I might be wrong'). Adapter-template policy determines when output_type='Verdict' on high-blast-radius outputs must populate this field. Composes with operator OS MAY-LATITUDE-5 'pushback affordance' rule. Recommended tier."
+    },
+    "translation_note": {
+      "$ref": "#/$defs/translationNote",
+      "description": "Construct-DDD anti-corruption layer at envelope-level handoff (v1.2). When an envelope crosses a construct boundary (calling construct's room hands off to a different construct's room), this field carries the translation surface — how key terms from the emitting construct's bounded context map into the receiving construct's. Same word means different things across constructs (e.g., 'weight' in artisan vs noether); translation_note makes the translation visible and auditable. Composes with [[no-handoffs-without-observability]] thesis. Recommended tier when from_construct != to_construct in a composition."
     },
     "domain": {
       "type": ["string", "null"],
@@ -140,9 +144,39 @@
       "type": "string",
       "pattern": "^1\\.[0-9]+(?:\\.[0-9]+)?$",
       "default": "1.0",
-      "description": "Schema version of this packet. Always 1.x.y for this cycle. v1.0 = original; v1.1 = adds source_provenance + kaironic_context + pushback_invitation; v1.1.1 = adds allOf privacy invariants + required fields on new defs. Optional tier (defaults to 1.0 — adapter SHOULD emit '1.1' when any v1.1 field is present so v1.0-pinned consumers can refuse cleanly)."
+      "description": "Schema version of this packet. Always 1.x.y for this cycle. v1.0 = original; v1.1 = adds source_provenance + kaironic_context + pushback_invitation; v1.1.1 = adds allOf privacy invariants + required fields on new defs; v1.2 = adds source_construct_affinity + translation_note (construct-DDD anti-corruption layer); v1.2.1 = closes Flatline+BB findings (privacy_scope on translation_note, schema_version allOf coupling, tighter slug pattern, uniqueItems, symmetric from/to pairing, minLength 60). Optional tier (defaults to 1.0). v1.2.1 enforces via allOf: if any v1.2+ field is present, schema_version MUST be >= 1.2."
     }
   },
+  "allOf": [
+    {
+      "$comment": "v1.2.1: if any v1.2 field is present (translation_note OR source_construct_affinity on any provenanceEntry), schema_version MUST match ^1\\.([2-9]|[1-9][0-9]+) so v1.0/v1.1-pinned consumers can refuse cleanly. Closes BB-medium-no-version-gate-on-translation-note + Flatline-IMP-010.",
+      "if": {
+        "anyOf": [
+          { "required": ["translation_note"] },
+          {
+            "required": ["source_provenance"],
+            "properties": {
+              "source_provenance": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": ["source_construct_affinity"]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "schema_version": {
+            "pattern": "^1\\.([2-9]|[1-9][0-9]+)(\\.[0-9]+)?$"
+          }
+        },
+        "required": ["schema_version"]
+      }
+    }
+  ],
   "$defs": {
     "typedRef": {
       "type": "object",
@@ -227,6 +261,18 @@
           "type": "boolean",
           "description": "Whether the operator has personally read and validated this source. Distinct from operator_signed (cryptographic). Maps to vault frontmatter read_state >= 'read'."
         },
+        "source_construct_affinity": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "description": "Construct-DDD affinity (v1.2): which construct(s)' bounded context the source belongs to. Slugs match installed construct.yaml entries (artisan, observer, k-hole, the-arcade, noether, etc.) OR project anchors (purupuru, mibera-honeyroad, freeside, etc.) OR the literal sentinel 'cross-domain' for spanning doctrine. Applies to ALL source_type values — for vault sources reflects the vault page's construct_affinity frontmatter; for non-vault sources reflects the interpreting construct domain. Mirrors vault frontmatter `construct_affinity`. Slug existence validation against active construct registry is NOT enforced at schema level (caller responsibility; future build-time check). v1.2.1: uniqueItems prevents duplicate slugs; tighter pattern rejects trailing/double hyphens."
+        },
         "decay_class": {
           "enum": ["fast", "normal", "slow", "frozen", "unknown"],
           "description": "OPTIONAL ARCHIVIST EXTENSION. Ebbinghaus decay class for confidence aging per the archivist construct's lifecycle model. Universal substrate constructs MUST NOT require this field; consumers not running archivist may omit. Marked as construct-specific extension per BB-F5 / author self-flag — generic substrate alternative: omit and let archivist emit its own side-channel envelope when needed."
@@ -273,6 +319,78 @@
           "description": "ADVISORY ONLY. Construct's suggestion about whether mid-flight surfacing is appropriate. The orchestrator owns the final interruption decision per Operator OS Kaironic Time Protocol — this field is a hint, not authorization. Defaults to false. Per BB-F11 review: orchestrator MUST NOT delegate authorization to emitters."
         }
       }
+    },
+    "translationNote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["note"],
+      "properties": {
+        "from_construct": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+          "maxLength": 64,
+          "description": "Slug of the emitting construct's bounded context. Optional when the envelope is operator-direct."
+        },
+        "to_construct": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+          "maxLength": 64,
+          "description": "Slug of the receiving construct's bounded context. Optional when the envelope is for any consumer."
+        },
+        "note": {
+          "type": "string",
+          "minLength": 60,
+          "maxLength": 560,
+          "description": "Free-form translation note: how key terms from the emitting construct's ubiquitous language map to the receiving construct's. One paragraph. v1.2.1: minLength bumped from 30 → 60 to force substantive translations (closes BB-low-minlength-30). Required field when translation_note is present."
+        },
+        "privacy_scope": {
+          "enum": ["actor_private", "operator_team", "public"],
+          "description": "v1.2.1: privacy scope of the translation note itself. MUST inherit the most-restrictive privacy_scope across all source_provenance entries the note translates from (caller responsibility — schema-level cross-field comparison not natively expressible; future build-time check). When omitted, downstream consumers MUST treat the translation as actor_private (fail-closed default). Closes Flatline-SKP-001-CRITICAL: privacy leak through translation_note free-form `note` field could inline actor_private vault content."
+        },
+        "key_translations": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["term", "from_meaning", "to_meaning"],
+            "properties": {
+              "term": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "from_meaning": { "type": "string", "minLength": 5, "maxLength": 200 },
+              "to_meaning": { "type": "string", "minLength": 5, "maxLength": 200 }
+            }
+          },
+          "description": "Optional structured term-by-term translation table. Each row: a term, what it means in from_construct, what it means in to_construct. v1.2.1: uniqueItems prevents duplicate term rows. Surfaces the explicit anti-corruption mapping."
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "v1.2.1: from_construct and to_construct must be paired symmetrically — both absent, both null, or both present as strings. Closes BB-medium-translation-note-pair-not-enforced + Flatline-SKP-002 partial.",
+          "anyOf": [
+            {
+              "allOf": [
+                { "not": { "required": ["from_construct"] } },
+                { "not": { "required": ["to_construct"] } }
+              ]
+            },
+            {
+              "properties": {
+                "from_construct": { "type": "null" },
+                "to_construct": { "type": "null" }
+              },
+              "required": ["from_construct", "to_construct"]
+            },
+            {
+              "required": ["from_construct", "to_construct"],
+              "properties": {
+                "from_construct": { "type": "string" },
+                "to_construct": { "type": "string" }
+              }
+            }
+          ]
+        }
+      ]
     },
     "pushbackInvitation": {
       "type": "object",

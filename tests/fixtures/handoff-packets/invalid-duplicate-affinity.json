@@ -1,0 +1,17 @@
+{
+  "construct_slug": "artisan",
+  "output_type": "Verdict",
+  "verdict": {},
+  "invocation_mode": "room",
+  "cycle_id": "negative-fixture-duplicate-affinity",
+  "schema_version": "1.2",
+  "source_provenance": [
+    {
+      "source_type": "vault",
+      "ref": "wiki/concepts/freeside-as-layered-station.md",
+      "privacy_scope": "actor_private",
+      "use_label": "background_only",
+      "source_construct_affinity": ["the-arcade", "the-arcade"]
+    }
+  ]
+}

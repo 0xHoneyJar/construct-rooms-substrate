@@ -1,0 +1,11 @@
+{
+  "construct_slug": "artisan",
+  "output_type": "Verdict",
+  "verdict": {},
+  "invocation_mode": "room",
+  "cycle_id": "negative-fixture-v12-without-version",
+  "schema_version": "1.0",
+  "translation_note": {
+    "note": "This envelope has a v1.2 translation_note field but declares schema_version 1.0, which should be refused so v1.0-pinned consumers can refuse cleanly."
+  }
+}

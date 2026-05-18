@@ -1,0 +1,58 @@
+{
+  "construct_slug": "k-hole",
+  "output_type": "Artifact",
+  "verdict": {
+    "summary": "Research crystallization on weight-rhythm coupling in interactive UIs."
+  },
+  "invocation_mode": "room",
+  "cycle_id": "simstim-20260517-translation-aware",
+  "persona": "STAMETS",
+  "schema_version": "1.2",
+  "source_provenance": [
+    {
+      "source_type": "vault",
+      "ref": "wiki/concepts/freeside-as-layered-station.md",
+      "privacy_scope": "actor_private",
+      "use_label": "background_only",
+      "operator_validated": true,
+      "source_construct_affinity": ["the-arcade", "freeside", "observer", "cross-domain"]
+    },
+    {
+      "source_type": "external",
+      "ref": "https://transformer-circuits.pub/2026/nla/",
+      "privacy_scope": "public",
+      "use_label": "usable",
+      "source_construct_affinity": ["scar", "cross-domain"]
+    }
+  ],
+  "translation_note": {
+    "from_construct": "k-hole",
+    "to_construct": "artisan",
+    "privacy_scope": "actor_private",
+    "note": "Research surfaced 'weight' as confidence-divergence signal in NLA paper. Artisan-domain 'weight' means visual mass / rhythm. Treat the research finding as background context for FEEL judgments — NOT as a substitute for material/rhythm scoring.",
+    "key_translations": [
+      {
+        "term": "weight",
+        "from_meaning": "confidence-divergence between stated rationale and behavior (NLA paper)",
+        "to_meaning": "visual mass + rhythmic emphasis in a layout (artisan craft axis)"
+      },
+      {
+        "term": "verdict",
+        "from_meaning": "research finding crystallized from N sources",
+        "to_meaning": "scoring outcome on a craft surface (1-5 axes)"
+      }
+    ]
+  },
+  "kaironic_context": {
+    "trigger": "kaironic",
+    "flow_state": "discovery",
+    "attention_cost": "medium",
+    "interrupt_authorized": false
+  },
+  "pushback_invitation": {
+    "primary_uncertainty": "The mapping between NLA-paper 'confidence weight' and artisan 'visual weight' is loose analogy, not formal. Artisan should treat the research as orientation, not authority.",
+    "operator_check": "Does the operator agree that confidence-divergence findings can inform craft judgment, or should they stay separate domains entirely?",
+    "confidence": 0.65
+  },
+  "created_at": "2026-05-17T20:00:00Z"
+}
